@@ -17,11 +17,8 @@ import logging
 import sys
 
 from .formatter import THEME, MAX_LENGTH, PIPE_CHAR, CAP_CHAR, ExceptionFormatter
-from .encoding import to_byte
-from .context import PY3
-from .color import SUPPORTS_COLOR, SHOULD_ENCODE, STREAM
+from .color import SUPPORTS_COLOR, STREAM
 from .log import BetExcLogger, patch as patch_logging
-from .repl import interact, get_repl
 
 
 __version__ = '0.1.8'
@@ -31,15 +28,7 @@ THEME = THEME.copy()  # Users customizing the theme should not impact core
 
 
 def write_stream(data, stream=STREAM):
-    if SHOULD_ENCODE:
-        data = to_byte(data)
-
-        if PY3:
-            stream.buffer.write(data)
-        else:
-            stream.write(data)
-    else:
-        stream.write(data)
+    stream.write(data)
 
 
 def format_exception(exc, value, tb):

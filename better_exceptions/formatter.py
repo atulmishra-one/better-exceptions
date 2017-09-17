@@ -16,32 +16,40 @@ import ast
 import inspect
 import keyword
 import linecache
+import locale
 import os
 import re
 import sys
 import traceback
 
-from .color import STREAM, SUPPORTS_COLOR
-from .context import PY3
-from .encoding import ENCODING, to_byte, to_unicode
+from .color import SUPPORTS_COLOR
 from .repl import get_repl
 
+
+PY3 = sys.version_info[0] >= 3
+
+ENCODING = locale.getpreferredencoding()
 
 PIPE_CHAR = u'\u2502'
 CAP_CHAR = u'\u2514'
 
 try:
-    PIPE_CHAR.encode(ENCODING)
+    pipe_encoded = PIPE_CHAR.encode(ENCODING)
+    cap_encoded = CAP_CHAR.encode(ENCODING)
 except UnicodeEncodeError:
     PIPE_CHAR = '|'
     CAP_CHAR = '->'
+else:
+    if not PY3:
+        PIPE_CHAR = pipe_encoded
+        CAP_CHAR = cap_encoded
 
 THEME = {
     'comment': lambda s: '\x1b[2;37m{}\x1b[m'.format(s),
     'keyword': lambda s: '\x1b[33;1m{}\x1b[m'.format(s),
     'builtin': lambda s: '\x1b[35;1m{}\x1b[m'.format(s),
     'literal': lambda s: '\x1b[31m{}\x1b[m'.format(s),
-    'inspect': lambda s: u'\x1b[36m{}\x1b[m'.format(s),
+    'inspect': lambda s: '\x1b[36m{}\x1b[m'.format(s),
 }
 
 MAX_LENGTH = 128
@@ -108,7 +116,10 @@ class ExceptionFormatter(object):
                 displayed_nodes.append((node, node.id, 'builtin'))
 
             if nodecls == ast.Str:
-                displayed_nodes.append((node, "'{}'".format(node.s), 'literal'))
+                s = node.s
+                if not PY3 and isinstance(s, unicode):
+                    s = s.encode("unicode-escape").decode("string-escape")
+                displayed_nodes.append((node, "'{}'".format(s), 'literal'))
 
             if nodecls == ast.Num:
                 displayed_nodes.append((node, str(node.n), 'literal'))
@@ -125,7 +136,15 @@ class ExceptionFormatter(object):
         return [node for node in ast.walk(tree) if isinstance(node, ast.Name)]
 
     def format_value(self, v):
-        v = repr(v)
+        to_repr = repr
+        if not PY3:
+            if isinstance(v, str):
+                to_repr = lambda v: "'" + v + "'"
+            elif isinstance(v, unicode):
+                # .encode("unicode-escape").decode("string-escape") ?
+                to_repr = lambda v: "u'" + v.encode('utf-8') + "'"
+
+        v = to_repr(v)
         max_length = self._max_length
         if max_length is not None and len(v) > max_length:
             v = v[:max_length] + '...'
@@ -173,11 +192,14 @@ class ExceptionFormatter(object):
                 cmdline = spawn(['ps', '-ww', '-p', str(os.getpid()), '-o', 'command='])
             except CalledProcessError:
                 return ''
+
+            if PY3 and isinstance(cmdline, bytes):
+                cmdline = cmdline.decode(sys.stdout.encoding)
         else:
             # current system doesn't have a way to get the command line
             return ''
 
-        cmdline = cmdline.decode('utf-8').strip()
+        cmdline = cmdline.strip()
         cmdline = self.split_cmdline(cmdline)
 
         extra_args = sys.argv[1:]
@@ -215,6 +237,8 @@ class ExceptionFormatter(object):
         repl = get_repl()
         if repl is not None and filename in repl.entries:
             _, filename, source = repl.entries[filename]
+            if not PY3 and isinstance(source, unicode):
+                source = source.encode('utf-8')
             source = source.replace('\r\n', '\n').split('\n')[lineno - 1]
         elif filename == '<string>':
             source = self.get_string_source()
@@ -247,14 +271,9 @@ class ExceptionFormatter(object):
                 line += (' ' * (pc - index)) + self._pipe_char
                 index = pc + 1
 
-            if not PY3 and isinstance(val, str):
-                # In Python2 the Non-ASCII value will be the escaped string,
-                # use string-escape to decode the string to show the text in human way.
-                val = to_unicode(val.decode("string-escape"))
-
-            line += u'{}{} {}'.format((' ' * (col - index)), self._cap_char, val)
+            line += '{}{} {}'.format((' ' * (col - index)), self._cap_char, val)
             lines.append(self._theme['inspect'](line) if self._colored else line)
-        formatted = u'\n    '.join([to_unicode(x) for x in lines])
+        formatted = '\n    '.join(lines)
 
         return (filename, lineno, function, formatted), color_source
 
@@ -295,6 +314,6 @@ class ExceptionFormatter(object):
             value.args = (colored_source,)
         title = traceback.format_exception_only(exc, value)
 
-        full_trace = u'Traceback (most recent call last):\n{}{}\n'.format(formatted, title[0].strip())
+        full_trace = 'Traceback (most recent call last):\n{}{}\n'.format(formatted, title[0].strip())
 
         return full_trace

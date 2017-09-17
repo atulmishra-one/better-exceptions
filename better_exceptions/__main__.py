@@ -2,7 +2,9 @@ import argparse
 import imp
 import os
 
-from better_exceptions import interact, hook
+from better_exceptions import hook
+from better_exceptions.repl import interact
+
 hook()
 
 parser = argparse.ArgumentParser(description='A Python REPL with better exceptions enabled', prog='python -m better_exceptions')
