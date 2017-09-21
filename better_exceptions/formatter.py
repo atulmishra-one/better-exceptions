@@ -12,160 +12,83 @@ License: Copyright (c) 2017 Josh Junon, licensed under the MIT license
 
 from __future__ import absolute_import
 
-import ast
 import inspect
-import keyword
 import linecache
-import locale
 import os
 import re
 import sys
 import traceback
 
+from pygments.token import Token
+
 from .color import SUPPORTS_COLOR
+from .highlighter import Highlighter
 from .repl import get_repl
 
 
 PY3 = sys.version_info[0] >= 3
 
-ENCODING = locale.getpreferredencoding()
-
-PIPE_CHAR = u'\u2502'
-CAP_CHAR = u'\u2514'
-
-try:
-    pipe_encoded = PIPE_CHAR.encode(ENCODING)
-    cap_encoded = CAP_CHAR.encode(ENCODING)
-except UnicodeEncodeError:
-    PIPE_CHAR = '|'
-    CAP_CHAR = '->'
-else:
-    if not PY3:
-        PIPE_CHAR = pipe_encoded
-        CAP_CHAR = cap_encoded
-
 THEME = {
-    'comment': lambda s: '\x1b[2;37m{}\x1b[m'.format(s),
-    'keyword': lambda s: '\x1b[33;1m{}\x1b[m'.format(s),
-    'builtin': lambda s: '\x1b[35;1m{}\x1b[m'.format(s),
-    'literal': lambda s: '\x1b[31m{}\x1b[m'.format(s),
-    'inspect': lambda s: '\x1b[36m{}\x1b[m'.format(s),
+    'inspect': lambda s: u'\x1b[36m{}\x1b[m'.format(s),
 }
 
 MAX_LENGTH = 128
 
 
-def isast(v):
-    return inspect.isclass(v) and issubclass(v, ast.AST)
-
-
 class ExceptionFormatter(object):
 
-    COMMENT_REGXP = re.compile(r'((?:(?:"(?:[^\\"]|(\\\\)*\\")*")|(?:\'(?:[^\\"]|(\\\\)*\\\')*\')|[^#])*)(#.*)$')
     CMDLINE_REGXP = re.compile(r'(?:[^\t ]*([\'"])(?:\\.|.)*(?:\1))[^\t ]*|([^\t ]+)')
 
-    AST_ELEMENTS = {
-        'builtins': __builtins__.keys() if type(__builtins__) is dict else dir(__builtins__),
-        'keywords': [getattr(ast, cls) for cls in dir(ast) if keyword.iskeyword(cls.lower()) and isast(getattr(ast, cls))],
-    }
-
-    def __init__(self, colored=SUPPORTS_COLOR, theme=THEME, max_length=MAX_LENGTH,
-                       pipe_char=PIPE_CHAR, cap_char=CAP_CHAR):
+    def __init__(self, colored=SUPPORTS_COLOR, theme=THEME, max_length=MAX_LENGTH, encoding=None):
         self._colored = colored
         self._theme = theme
         self._max_length = max_length
-        self._pipe_char = pipe_char
-        self._cap_char = cap_char
+        self._encoding = encoding or 'ascii'
+        self._pipe_char = self.get_pipe_char()
+        self._cap_char =  self.get_cap_char()
+        self._highlighter = Highlighter(python3=PY3)
 
-    def colorize_comment(self, source):
-        match = self.COMMENT_REGXP.match(source)
-        if match:
-            source = '{}{}'.format(match.group(1), self._theme['comment'](match.group(4)))
-        return source
+    def _get_char(self, value, default):
+        try:
+            value.encode(self._encoding)
+        except UnicodeEncodeError:
+            return default
+        else:
+            return value
 
-    def colorize_tree(self, tree, source):
-        if not self._colored:
-            # quick fail
-            return source
+    def get_pipe_char(self):
+        return self._get_char(u'\u2502', u'|')
 
-        chunks = []
+    def get_cap_char(self):
+        return self._get_char(u'\u2514', u'->')
 
-        offset = 0
-        nodes = [n for n in ast.walk(tree)]
-
-        def append(offset, node, s, theme):
-            begin_col = node.col_offset
-            src_chunk = source[offset:begin_col]
-            chunks.append(src_chunk)
-            chunks.append(self._theme[theme](s))
-            return begin_col + len(s)
-
-        displayed_nodes = []
-
-        for node in nodes:
-            nodecls = node.__class__
-            nodename = nodecls.__name__
-
-            if 'col_offset' not in dir(node):
-                continue
-
-            if nodecls in self.AST_ELEMENTS['keywords']:
-                displayed_nodes.append((node, nodename.lower(), 'keyword'))
-
-            if nodecls == ast.Name and node.id in self.AST_ELEMENTS['builtins']:
-                displayed_nodes.append((node, node.id, 'builtin'))
-
-            if nodecls == ast.Str:
-                s = node.s
-                if not PY3 and isinstance(s, unicode):
-                    s = s.encode("unicode-escape").decode("string-escape")
-                displayed_nodes.append((node, "'{}'".format(s), 'literal'))
-
-            if nodecls == ast.Num:
-                displayed_nodes.append((node, str(node.n), 'literal'))
-
-        displayed_nodes.sort(key=lambda elem: elem[0].col_offset)
-
-        for dn in displayed_nodes:
-            offset = append(offset, *dn)
-
-        chunks.append(source[offset:])
-        return self.colorize_comment(''.join(chunks))
-
-    def get_relevant_names(self, source, tree):
-        return [node for node in ast.walk(tree) if isinstance(node, ast.Name)]
+    def get_relevant_names(self, source):
+        source = source.encode(self._encoding, errors='backslashreplace')
+        source = source.decode(self._encoding)
+        tokens = self._highlighter.get_tokens(source)
+        return [token for token in tokens if token[1] in Token.Name]
 
     def format_value(self, v):
-        to_repr = repr
-        if not PY3:
-            if isinstance(v, str):
-                to_repr = lambda v: "'" + v + "'"
-            elif isinstance(v, unicode):
-                # .encode("unicode-escape").decode("string-escape") ?
-                to_repr = lambda v: "u'" + v.encode('utf-8') + "'"
-
-        v = to_repr(v)
+        v = repr(v)
         max_length = self._max_length
         if max_length is not None and len(v) > max_length:
-            v = v[:max_length] + '...'
+            v = v[:max_length] + u'...'
         return v
 
-    def get_relevant_values(self, source, frame, tree):
-        names = self.get_relevant_names(source, tree)
+    def get_relevant_values(self, source, frame):
+        names = self.get_relevant_names(source)
         values = []
 
         for name in names:
-            text = name.id
-            col = name.col_offset
-            if text in frame.f_locals:
-                val = frame.f_locals.get(text, None)
-                values.append((text, col, self.format_value(val)))
-            elif text in frame.f_globals:
-                val = frame.f_globals.get(text, None)
-                values.append((text, col, self.format_value(val)))
+            index, tokentype, value = name
+            if value in frame.f_locals:
+                val = frame.f_locals.get(value, None)
+                values.append((value, index, self.format_value(val)))
+            elif value in frame.f_globals:
+                val = frame.f_globals.get(value, None)
+                values.append((value, index, self.format_value(val)))
 
         values.sort(key=lambda e: e[1])
-
         return values
 
     def split_cmdline(self, cmdline):
@@ -180,7 +103,7 @@ class ExceptionFormatter(object):
         cmdline = None
         if platform.system() == 'Windows':
             # TODO use winapi to obtain the command line
-            return ''
+            return u''
         elif platform.system() == 'Linux':
             # TODO try to use proc
             pass
@@ -191,13 +114,13 @@ class ExceptionFormatter(object):
             try:
                 cmdline = spawn(['ps', '-ww', '-p', str(os.getpid()), '-o', 'command='])
             except CalledProcessError:
-                return ''
+                return u''
 
-            if PY3 and isinstance(cmdline, bytes):
-                cmdline = cmdline.decode(sys.stdout.encoding)
+            if (PY3 and isinstance(cmdline, bytes)) or (not PY3 and isinstance(cmdline, str)):
+                cmdline = cmdline.decode(sys.stdout.encoding or 'utf-8')
         else:
             # current system doesn't have a way to get the command line
-            return ''
+            return u''
 
         cmdline = cmdline.strip()
         cmdline = self.split_cmdline(cmdline)
@@ -206,7 +129,7 @@ class ExceptionFormatter(object):
         if len(extra_args) > 0:
             if cmdline[-len(extra_args):] != extra_args:
                 # we can't rely on the output to be correct; fail!
-                return ''
+                return u''
 
             cmdline = cmdline[1:-len(extra_args)]
 
@@ -224,9 +147,14 @@ class ExceptionFormatter(object):
                 break
 
         cmdline = cmdline[skip:]
-        source = ' '.join(cmdline)
+        source = u' '.join(cmdline)
 
         return source
+
+    def colorize_source(self, source):
+        if not self._colored:
+            return source
+        return self._highlighter.highlight(source)
 
     def get_traceback_information(self, tb):
         frame_info = inspect.getframeinfo(tb)
@@ -237,23 +165,19 @@ class ExceptionFormatter(object):
         repl = get_repl()
         if repl is not None and filename in repl.entries:
             _, filename, source = repl.entries[filename]
-            if not PY3 and isinstance(source, unicode):
-                source = source.encode('utf-8')
             source = source.replace('\r\n', '\n').split('\n')[lineno - 1]
         elif filename == '<string>':
             source = self.get_string_source()
         else:
             source = linecache.getline(filename, lineno)
+            if not PY3 and isinstance(source, str):
+                source = source.decode('utf-8')
 
         source = source.strip()
 
-        try:
-            tree = ast.parse(source, mode='exec')
-        except SyntaxError:
-            return filename, lineno, function, source, source, []
+        color_source = self.colorize_source(source)
 
-        relevant_values = self.get_relevant_values(source, tb.tb_frame, tree)
-        color_source = self.colorize_tree(tree, source)
+        relevant_values = self.get_relevant_values(source, tb.tb_frame)
 
         return filename, lineno, function, source, color_source, relevant_values
 
@@ -265,15 +189,15 @@ class ExceptionFormatter(object):
         for i in reversed(range(len(relevant_values))):
             _, col, val = relevant_values[i]
             pipe_cols = [pcol for _, pcol, _ in relevant_values[:i]]
-            line = ''
+            line = u''
             index = 0
             for pc in pipe_cols:
-                line += (' ' * (pc - index)) + self._pipe_char
+                line += (u' ' * (pc - index)) + self._pipe_char
                 index = pc + 1
 
-            line += '{}{} {}'.format((' ' * (col - index)), self._cap_char, val)
+            line += u'{}{} {}'.format((u' ' * (col - index)), self._cap_char, val)
             lines.append(self._theme['inspect'](line) if self._colored else line)
-        formatted = '\n    '.join(lines)
+        formatted = u'\n    '.join(lines)
 
         return (filename, lineno, function, formatted), color_source
 
@@ -289,7 +213,7 @@ class ExceptionFormatter(object):
                 assert tb is not None
 
         frames = []
-        final_source = ''
+        final_source = u''
         while tb:
             if omit_last and not tb.tb_next:
                 break
@@ -305,7 +229,7 @@ class ExceptionFormatter(object):
 
         lines = traceback.format_list(frames)
 
-        return ''.join(lines), final_source
+        return u''.join(lines), final_source
 
     def format_exception(self, exc, value, tb):
         formatted, colored_source = self.format_traceback(tb)
@@ -314,6 +238,8 @@ class ExceptionFormatter(object):
             value.args = (colored_source,)
         title = traceback.format_exception_only(exc, value)
 
-        full_trace = 'Traceback (most recent call last):\n{}{}\n'.format(formatted, title[0].strip())
+        full_trace = u'Traceback (most recent call last):\n{}{}\n'.format(formatted, title[0].strip())
+        full_trace = full_trace.encode(self._encoding, errors='backslashreplace')
+        full_trace = full_trace.decode(self._encoding)
 
         return full_trace

@@ -1,44 +1,44 @@
-python3 test/test.py
+python test/test.py
 
 
 Traceback (most recent call last):
   File "test/test.py", line 17, in <module>
     shallow(bar, 15)
-    │       └ 2
-    └ <function shallow at 0xDEADBEEF>
+    |       -> 2
+    -> <function shallow at 0xDEADBEEF>
   File "test/test.py", line 8, in shallow
     deep(a + b)
-    │    │   └ 15
-    │    └ 2
-    └ <function deep at 0xDEADBEEF>
+    |    |   -> 15
+    |    -> 2
+    -> <function deep at 0xDEADBEEF>
   File "test/test.py", line 13, in deep
     assert val > 10 and foo == 60
-           │            └ 52
-           └ 17
+           |            -> 52
+           -> 17
 AssertionError: assert val > 10 and foo == 60
 
 
 
-python3 test/test_color.py
+python test/test_color.py
 
 
 False
 
 
 
-python3 test/test_encoding.py
+python test/test_encoding.py
 
 
 Traceback (most recent call last):
   File "test/test_encoding.py", line 14, in <module>
     div()
-    └ <function div at 0xDEADBEEF>
+    -> <function div at 0xDEADBEEF>
   File "test/test_encoding.py", line 11, in div
-    return _deep("天")
-           └ <function _deep at 0xDEADBEEF>
+    return _deep("\u5929")
+           -> <function _deep at 0xDEADBEEF>
   File "test/test_encoding.py", line 8, in _deep
     return 1 / val
-               └ '天'
+               -> '\u5929'
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
@@ -46,7 +46,7 @@ TypeError: unsupported operand type(s) for /: 'int' and 'str'
 ./test/test_interactive.sh
 
 
-spawn python3 -m better_exceptions -q
+spawn python -m better_exceptions -q
 >>> import better_exceptions
 >>> def foo(a):
 ...     assert a > 10
@@ -54,12 +54,12 @@ spawn python3 -m better_exceptions -q
 >>> foo(1)
 Traceback (most recent call last):
   File "<console>", line 1, in <module>
-    foo([31m1[m)
-    [36m└ <function foo at 0xDEADBEEF>[m
+    [38;5;15mfoo[39m[38;5;15m([39m[38;5;141m1[39m[38;5;15m)[39m
+    [36m-> <function foo at 0xDEADBEEF>[m
   File "<console>", line 2, in foo
-    [33;1massert[m a > [31m10[m
-    [36m       └ 1[m
-AssertionError: [33;1massert[m a > [31m10[m
+    [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
+    [36m       -> 1[m
+AssertionError: [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
 >>> exit()
 
 
@@ -73,17 +73,19 @@ import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this 
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
-                              │                         │             └ 5
-                              │                         └ 5
-                              └ <module 'test_module' from '/removed/for/test/purposes.py'>
+           |                  |                         |             -> 5
+           |                  |                         -> 5
+           |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+           -> <module 'test_module' from '/removed/for/test/purposes.py'>
 AssertionError: import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
 
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
-                              │                         │             └ 5
-                              │                         └ 5
-                              └ <module 'test_module' from '/removed/for/test/purposes.py'>
+           |                  |                         |             -> 5
+           |                  |                         -> 5
+           |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+           -> <module 'test_module' from '/removed/for/test/purposes.py'>
 AssertionError: import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
 
 from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
@@ -91,18 +93,22 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
-                                                                     │                         │                            └ 'why hello there'
-                                                                     │                         └ 'why hello there'
-                                                                     └ <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      |                  |                         |                            -> 'why hello there'
+                           |                      |                  |                         -> 'why hello there'
+                           |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
 why hello there
 
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
-                                                                     │                         │                            └ 'why hello there'
-                                                                     │                         └ 'why hello there'
-                                                                     └ <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      |                  |                         |                            -> 'why hello there'
+                           |                      |                  |                         -> 'why hello there'
+                           |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
 why hello there
 
@@ -111,31 +117,35 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
-                                                                     │                         │                                                 └ 'why     hello             there'
-                                                                     │                         └ 'why     hello             there'
-                                                                     └ <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      |                  |                         |                                                 -> 'why     hello             there'
+                           |                      |                  |                         -> 'why     hello             there'
+                           |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
 why     hello             there
 
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
-                                                                     │                         │                                                 └ 'why     hello             there'
-                                                                     │                         └ 'why     hello             there'
-                                                                     └ <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      |                  |                         |                                                 -> 'why     hello             there'
+                           |                      |                  |                         -> 'why     hello             there'
+                           |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
+                           -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
 why     hello             there
 
 
 
-python3 test/test_logging.py
+python test/test_logging.py
 
 
 ERROR:__main__:callback failed
 Traceback (most recent call last):
   File "test/test_logging.py", line 16, in foo
     cb()
-    └ <function bar3 at 0xDEADBEEF>
+    -> <function bar3 at 0xDEADBEEF>
   File "test/test_logging.py", line 33, in bar3
     raise Exception('this is a test exception')
 Exception: this is a test exception
@@ -144,39 +154,39 @@ ERROR:__main__:callback failed
 Traceback (most recent call last):
   File "test/test_logging.py", line 16, in foo
     cb()
-    └ <function bar4 at 0xDEADBEEF>
+    -> <function bar4 at 0xDEADBEEF>
   File "test/test_logging.py", line 38, in bar4
     assert baz == 90
-           └ 52
+           -> 52
 AssertionError: assert baz == 90
 
 
 
 
-python3 test/test_truncating.py
+python test/test_truncating.py
 
 
 Traceback (most recent call last):
   File "test/test_truncating.py", line 12, in <module>
     div()
-    └ <function ...
+    -> <function ...
   File "test/test_truncating.py", line 9, in div
     return 1 / var
-               └ '999999999...
+               -> '999999999...
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
 
-python3 test/test_truncating_disabled.py
+python test/test_truncating_disabled.py
 
 
 Traceback (most recent call last):
   File "test/test_truncating_disabled.py", line 12, in <module>
     div()
-    └ <function div at 0xDEADBEEF>
+    -> <function div at 0xDEADBEEF>
   File "test/test_truncating_disabled.py", line 9, in div
     return 1 / var
-               └ '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
+               -> '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
