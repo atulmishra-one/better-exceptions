@@ -1,0 +1,193 @@
+python test/test.py
+
+
+Traceback (most recent call last):
+  File "test/test.py", line 17, in <module>
+    [38;5;15mshallow[39m[38;5;15m([39m[38;5;15mbar[39m[38;5;15m,[39m[38;5;15m [39m[38;5;141m15[39m[38;5;15m)[39m
+    [36m│       └ 2[m
+    [36m└ <function shallow at 0xDEADBEEF>[m
+  File "test/test.py", line 8, in shallow
+    [38;5;15mdeep[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;15mb[39m[38;5;15m)[39m
+    [36m│    │   └ 15[m
+    [36m│    └ 2[m
+    [36m└ <function deep at 0xDEADBEEF>[m
+  File "test/test.py", line 13, in deep
+    [38;5;81massert[39m[38;5;15m [39m[38;5;15mval[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;197mand[39m[38;5;15m [39m[38;5;15mfoo[39m[38;5;15m [39m[38;5;197m==[39m[38;5;15m [39m[38;5;141m60[39m
+    [36m       │            └ 52[m
+    [36m       └ 17[m
+AssertionError: [38;5;81massert[39m[38;5;15m [39m[38;5;15mval[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;197mand[39m[38;5;15m [39m[38;5;15mfoo[39m[38;5;15m [39m[38;5;197m==[39m[38;5;15m [39m[38;5;141m60[39m
+
+
+
+python test/test_color.py
+
+
+True
+
+
+
+python test/test_encoding.py
+
+
+Traceback (most recent call last):
+  File "test/test_encoding.py", line 14, in <module>
+    [38;5;15mdiv[39m[38;5;15m([39m[38;5;15m)[39m
+    [36m└ <function div at 0xDEADBEEF>[m
+  File "test/test_encoding.py", line 11, in div
+    [38;5;81mreturn[39m[38;5;15m [39m[38;5;15m_deep[39m[38;5;15m([39m[38;5;186m"[39m[38;5;186m天[39m[38;5;186m"[39m[38;5;15m)[39m
+    [36m       └ <function _deep at 0xDEADBEEF>[m
+  File "test/test_encoding.py", line 8, in _deep
+    [38;5;81mreturn[39m[38;5;15m [39m[38;5;141m1[39m[38;5;15m [39m[38;5;197m/[39m[38;5;15m [39m[38;5;15mval[39m
+    [36m           └ '天'[m
+TypeError: unsupported operand type(s) for /: 'int' and 'str'
+
+
+
+./test/test_interactive.sh
+
+
+spawn python -m better_exceptions -q
+>>> import better_exceptions
+>>> def foo(a):
+...     assert a > 10
+... 
+>>> foo(1)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+    [38;5;15mfoo[39m[38;5;15m([39m[38;5;141m1[39m[38;5;15m)[39m
+    [36m└ <function foo at 0xDEADBEEF>[m
+  File "<console>", line 2, in foo
+    [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
+    [36m       └ 1[m
+AssertionError: [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
+>>> exit()
+
+
+
+./test/test_string.sh
+
+
+
+import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;141m5[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;242m# this should work fine[39m
+    [36m       │                  │                         │             └ 5[m
+    [36m       │                  │                         └ 5[m
+    [36m       │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m       └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+AssertionError: [38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;141m5[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;242m# this should work fine[39m
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;141m5[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;242m# this should work fine[39m
+    [36m       │                  │                         │             └ 5[m
+    [36m       │                  │                         └ 5[m
+    [36m       │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m       └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+AssertionError: [38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;141m5[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m[38;5;15m [39m[38;5;242m# this should work fine[39m
+
+from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+    [36m                       │                      │                  │                         │                            └ 'why hello there'[m
+    [36m                       │                      │                  │                         └ 'why hello there'[m
+    [36m                       │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)[m
+AssertionError: [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+why hello there
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+    [36m                       │                      │                  │                         │                            └ 'why hello there'[m
+    [36m                       │                      │                  │                         └ 'why hello there'[m
+    [36m                       │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)[m
+AssertionError: [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+why hello there
+
+from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+    [36m                       │                      │                  │                         │                                                 └ 'why     hello             there'[m
+    [36m                       │                      │                  │                         └ 'why     hello             there'[m
+    [36m                       │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)[m
+AssertionError: [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+why     hello             there
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+    [36m                       │                      │                  │                         │                                                 └ 'why     hello             there'[m
+    [36m                       │                      │                  │                         └ 'why     hello             there'[m
+    [36m                       │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>[m
+    [36m                       └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)[m
+AssertionError: [38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
+why     hello             there
+
+
+
+python test/test_logging.py
+
+
+ERROR:__main__:callback failed
+Traceback (most recent call last):
+  File "test/test_logging.py", line 16, in foo
+    [38;5;15mcb[39m[38;5;15m([39m[38;5;15m)[39m
+    [36m└ <function bar3 at 0xDEADBEEF>[m
+  File "test/test_logging.py", line 33, in bar3
+    [38;5;81mraise[39m[38;5;15m [39m[38;5;148mException[39m[38;5;15m([39m[38;5;186m'[39m[38;5;186mthis is a test exception[39m[38;5;186m'[39m[38;5;15m)[39m
+Exception: this is a test exception
+
+ERROR:__main__:callback failed
+Traceback (most recent call last):
+  File "test/test_logging.py", line 16, in foo
+    [38;5;15mcb[39m[38;5;15m([39m[38;5;15m)[39m
+    [36m└ <function bar4 at 0xDEADBEEF>[m
+  File "test/test_logging.py", line 38, in bar4
+    [38;5;81massert[39m[38;5;15m [39m[38;5;15mbaz[39m[38;5;15m [39m[38;5;197m==[39m[38;5;15m [39m[38;5;141m90[39m
+    [36m       └ 52[m
+AssertionError: [38;5;81massert[39m[38;5;15m [39m[38;5;15mbaz[39m[38;5;15m [39m[38;5;197m==[39m[38;5;15m [39m[38;5;141m90[39m
+
+
+
+
+python test/test_truncating.py
+
+
+Traceback (most recent call last):
+  File "test/test_truncating.py", line 12, in <module>
+    [38;5;15mdiv[39m[38;5;15m([39m[38;5;15m)[39m
+    [36m└ <function ...[m
+  File "test/test_truncating.py", line 9, in div
+    [38;5;81mreturn[39m[38;5;15m [39m[38;5;141m1[39m[38;5;15m [39m[38;5;197m/[39m[38;5;15m [39m[38;5;15mvar[39m
+    [36m           └ '999999999...[m
+TypeError: unsupported operand type(s) for /: 'int' and 'str'
+
+
+
+python test/test_truncating_disabled.py
+
+
+Traceback (most recent call last):
+  File "test/test_truncating_disabled.py", line 12, in <module>
+    [38;5;15mdiv[39m[38;5;15m([39m[38;5;15m)[39m
+    [36m└ <function div at 0xDEADBEEF>[m
+  File "test/test_truncating_disabled.py", line 9, in div
+    [38;5;81mreturn[39m[38;5;15m [39m[38;5;141m1[39m[38;5;15m [39m[38;5;197m/[39m[38;5;15m [39m[38;5;15mvar[39m
+    [36m           └ '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'[m
+TypeError: unsupported operand type(s) for /: 'int' and 'str'
+
+
+

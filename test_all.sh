@@ -17,7 +17,10 @@ export PYTHONPATH
 function normalize {
 	# we translate anything that looks like an address into 0xDEADBEEF
 	# since the addresses change from run to run and break diff testing
-	cat | sed 's|0x[a-fA-F0-9]\{1,\}|0xDEADBEEF|g' | sed 's|<module '"'[^']*' from '[^']*'>|<module 'test_module' from '/removed/for/test/purposes.py'>"'|g' | sed 's|File "/[^"]*"|File "/removed/for/test/purposes.ext"|g' | grep -v "bash: warning:"
+	cat | sed 's|0x[a-fA-F0-9]\{1,\}|0xDEADBEEF|g' | \
+	      sed 's|<module '"'[^']*' from '[^']*'>|<module 'test_module' from '/removed/for/test/purposes.py'>"'|g' | \
+	      sed 's|File "/[^"]*"|File "/removed/for/test/purposes.ext"|g' | \
+	      grep -v "bash: warning:"
 }
 
 function test_case {
@@ -46,24 +49,22 @@ function test_all {
 for encoding in ascii "UTF-8"; do
 	for term in xterm vt100 dumb; do
 		for color in 0 1; do
-			for pv in 2 3; do
-				[[ $color == "1" ]] && color_filename="color" || color_filename="nocolor"
-				filename="test/output/python${pv}-${term}-${encoding}-${color_filename}.out"
+			[[ $color == "1" ]] && color_filename="color" || color_filename="nocolor"
+			filename="test/output/${term}-${encoding}-${color_filename}.out"
 
-				export LANG="en_US.${encoding}"
-				export LC_ALL="${LANG}"
-				export TERM="${term}"
-				export FORCE_COLOR="${color}"
-				export BETEXC_PYTHON="python${pv}"
+			export LANG="en_US.${encoding}"
+			export LC_ALL="${LANG}"
+			export TERM="${term}"
+			export FORCE_COLOR="${color}"
+			export BETEXC_PYTHON="python"
 
-				echo -e "\x1b[35;1m${filename}\x1b[m" >&2
-				if $GENERATE; then
-					exec > "$filename"
-					test_all "$filename"
-				else
-					test_all | diff "$(pwd)/${filename}" -
-				fi
-			done
+			echo -e "\x1b[35;1m${filename}\x1b[m" >&2
+			if $GENERATE; then
+				exec > "$filename"
+				test_all "$filename"
+			else
+				test_all | diff "$(pwd)/${filename}" -
+			fi
 		done
 	done
 done

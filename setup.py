@@ -62,6 +62,9 @@ setup(
     download_url = 'https://github.com/qix-/better-exceptions/archive/{}.tar.gz'.format(version),
     keywords = ['pretty', 'better', 'exceptions', 'exception', 'error', 'local', 'debug', 'debugging', 'locals'],
     classifiers = [],
+    install_requires = [
+        'pygments>=2.2.0'
+    ],
     extras_require = {
         ':sys_platform=="win32"': ['colorama']
     },
