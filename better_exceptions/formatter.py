@@ -69,7 +69,11 @@ class ExceptionFormatter(object):
         return [token for token in tokens if token[1] in Token.Name]
 
     def format_value(self, v):
-        v = repr(v)
+        try:
+            v = repr(v)
+        except:
+            v = u'<unprintable %s object>' % type(v).__name__
+
         max_length = self._max_length
         if max_length is not None and len(v) > max_length:
             v = v[:max_length] + u'...'
