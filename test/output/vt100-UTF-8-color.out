@@ -46,7 +46,8 @@ TypeError: unsupported operand type(s) for /: 'int' and 'str'
 ./test/test_interactive.sh
 
 
-spawn python -m better_exceptions -q
+spawn python -m better_exceptions --banner=0
+0
 >>> import better_exceptions
 >>> def foo(a):
 ...     assert a > 10

@@ -43,8 +43,8 @@ def get_repl():
     return repl
 
 
-def interact(quiet=False):
+def interact(quiet=False, banner=None):
     global repl
     repl = BetterExceptionsConsole()
-    banner = '' if quiet else None
+    banner = '' if quiet else banner
     repl.interact(banner)

@@ -3,7 +3,8 @@
 [ -z "${BETEXC_PYTHON}" ] && export BETEXC_PYTHON=python
 
 /usr/bin/expect -f - <<EOF
-spawn ${BETEXC_PYTHON} -m better_exceptions -q
+spawn ${BETEXC_PYTHON} -m better_exceptions --banner=0
+expect "0"
 expect ">>> "
 send "import better_exceptions\r"
 expect ">>> "
