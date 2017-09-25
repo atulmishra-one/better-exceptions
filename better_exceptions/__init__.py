@@ -40,7 +40,8 @@ def format_exception(exc, value, tb):
 
 def excepthook(exc, value, tb):
     formatted = format_exception(exc, value, tb)
-    write_stream(formatted)
+    for line in formatted:
+        write_stream(line)
 
 
 def hook():
