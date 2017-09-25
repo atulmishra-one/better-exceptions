@@ -32,6 +32,12 @@ THEME = {
     'inspect': lambda s: u'\x1b[36m{}\x1b[m'.format(s),
 }
 
+MESSAGES = {
+    'introduction': u"Traceback (most recent call last):",
+    'cause': getattr(traceback, '_cause_message', u"The above exception was the direct cause of the following exception:").strip(),
+    'context': getattr(traceback, '_context_message', u"During handling of the above exception, another exception occurred:").strip(),
+}
+
 MAX_LENGTH = 128
 
 
@@ -160,6 +166,9 @@ class ExceptionFormatter(object):
             return source
         return self._highlighter.highlight(source)
 
+    def colorize_message(self, message):
+        return message
+
     def get_traceback_information(self, tb):
         frame_info = inspect.getframeinfo(tb)
         filename = frame_info.filename
@@ -235,15 +244,49 @@ class ExceptionFormatter(object):
 
         return u''.join(lines), final_source
 
-    def format_exception(self, exc, value, tb):
+    def sanitize(self, string):
+        encoding = self._encoding
+        return string.encode(encoding, errors='backslashreplace').decode(encoding)
+
+    def format_exception(self, exc, value, tb, _seen=None):
+        if _seen is None:
+            _seen = {None}
+
+        _seen.add(value)
+
+        if value:
+            if getattr(value, '__cause__', None) not in _seen:
+                for text in self.format_exception(type(value.__cause__),
+                                                  value.__cause__,
+                                                  value.__cause__.__traceback__,
+                                                  _seen=_seen):
+                    yield text
+                yield '\n' + MESSAGES['cause'] + '\n\n'
+            elif getattr(value, '__context__', None) not in _seen and not getattr(value, '__suppress_context__', True):
+                for text in self.format_exception(type(value.__context__),
+                                                  value.__context__,
+                                                  value.__context__.__traceback__,
+                                                  _seen=_seen):
+                    yield text
+                yield '\n' + MESSAGES['context'] + '\n\n'
+
         formatted, colored_source = self.format_traceback(tb)
 
         if not str(value) and exc is AssertionError:
             value.args = (colored_source,)
         title = traceback.format_exception_only(exc, value)
 
-        full_trace = u'Traceback (most recent call last):\n{}{}\n'.format(formatted, title[0].strip())
-        full_trace = full_trace.encode(self._encoding, errors='backslashreplace')
-        full_trace = full_trace.decode(self._encoding)
+        formatted_title = []
+        for line in title:
+            if line.startswith('    '):
+                formatted_line = self.colorize_source(line) + u'\n'
+            else:
+                formatted_line = self.colorize_message(line)
+            formatted_title.append(formatted_line)
+        formatted_title = u''.join(formatted_title)
 
-        return full_trace
+        yield self.sanitize(MESSAGES['introduction'] + u'\n')
+
+        yield self.sanitize(formatted)
+
+        yield self.sanitize(formatted_title)
