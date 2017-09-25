@@ -52,7 +52,7 @@ class ExceptionFormatter(object):
         self._encoding = encoding or 'ascii'
         self._pipe_char = self.get_pipe_char()
         self._cap_char =  self.get_cap_char()
-        self._highlighter = Highlighter(python3=PY3)
+        self._highlighter = Highlighter()
 
     def _get_char(self, value, default):
         try:
