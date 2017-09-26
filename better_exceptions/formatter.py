@@ -19,6 +19,7 @@ import re
 import sys
 import traceback
 
+import ansimarkup
 from pygments.token import Token
 
 from .color import SUPPORTS_COLOR
@@ -29,13 +30,15 @@ from .repl import get_repl
 PY3 = sys.version_info[0] >= 3
 
 THEME = {
-    'inspect': lambda s: u'\x1b[36m{}\x1b[m'.format(s),
-}
-
-MESSAGES = {
-    'introduction': u"Traceback (most recent call last):",
-    'cause': getattr(traceback, '_cause_message', u"The above exception was the direct cause of the following exception:").strip(),
-    'context': getattr(traceback, '_context_message', u"During handling of the above exception, another exception occurred:").strip(),
+    'introduction': u'<r>{introduction}</r>',
+    'cause': u'<b>{cause}</b>',
+    'context': u'<b>{context}</b>',
+    'location': u'File "<g>{dirname}{basename}</g>", line <y>{lineno}</y>, in <m>{source}</m>',
+    'short_location': u'File "<g>{dirname}{basename}</g>", line <y>{lineno}</y>',
+    'exception': u'<lr>{type}</lr>:<b>{value}</b>',
+    'pipe': u'<c>{pipe}</c>',
+    'cap': u'<c>{cap}</c>',
+    'value': u'<c><b>{value}</b></c>',
 }
 
 MAX_LENGTH = 128
@@ -44,6 +47,9 @@ MAX_LENGTH = 128
 class ExceptionFormatter(object):
 
     CMDLINE_REGXP = re.compile(r'(?:[^\t ]*([\'"])(?:\\.|.)*(?:\1))[^\t ]*|([^\t ]+)')
+    LOCATION_REGXP = re.compile(r'^  File "(?P<filepath>.*?)", line (?P<lineno>(?:\d+|\?)), in (?P<source>.*)$', flags=re.M)
+    SHORT_LOCATION_REGXP = re.compile(r'^  File "(?P<filepath>.*?)", line (?P<lineno>(?:\d+|\?))$', flags=re.M)
+    EXCEPTION_REGXP = re.compile(r'^(?P<type>.+?):(?P<value>.*)$')
 
     def __init__(self, colored=SUPPORTS_COLOR, theme=THEME, max_length=MAX_LENGTH, encoding=None):
         self._colored = colored
@@ -52,6 +58,9 @@ class ExceptionFormatter(object):
         self._encoding = encoding or 'ascii'
         self._pipe_char = self.get_pipe_char()
         self._cap_char =  self.get_cap_char()
+        self._introduction = u'Traceback (most recent call last):'
+        self._cause = getattr(traceback, '_cause_message', u"The above exception was the direct cause of the following exception:").strip()
+        self._context = getattr(traceback, '_context_message', u"During handling of the above exception, another exception occurred:").strip()
         self._highlighter = Highlighter()
 
     def _get_char(self, value, default):
@@ -161,13 +170,31 @@ class ExceptionFormatter(object):
 
         return source
 
+    def colorize(self, theme, **kwargs):
+        template = self._theme[theme]
+        if not self._colored:
+            template = ansimarkup.strip(template)
+        else:
+            template = ansimarkup.parse(template)
+
+        return template.format(**kwargs)
+
+    def colorize_location(self, filepath, lineno, source=None):
+        dirname, basename = os.path.split(filepath)
+        if dirname:
+            dirname += os.sep
+
+        if source is None:
+            theme = 'short_location'
+        else:
+            theme = 'location'
+
+        return self.colorize(theme, dirname=dirname, basename=basename, lineno=lineno, source=source)
+
     def colorize_source(self, source):
         if not self._colored:
             return source
         return self._highlighter.highlight(source)
-
-    def colorize_message(self, message):
-        return message
 
     def get_traceback_information(self, tb):
         frame_info = inspect.getframeinfo(tb)
@@ -194,7 +221,6 @@ class ExceptionFormatter(object):
 
         return filename, lineno, function, source, color_source, relevant_values
 
-
     def format_traceback_frame(self, tb):
         filename, lineno, function, source, color_source, relevant_values = self.get_traceback_information(tb)
 
@@ -204,16 +230,21 @@ class ExceptionFormatter(object):
             pipe_cols = [pcol for _, pcol, _ in relevant_values[:i]]
             line = u''
             index = 0
+
+            pipe = self.colorize('pipe', pipe=self._pipe_char)
+            cap = self.colorize('cap', cap=self._cap_char)
+            value = self.colorize('value', value=val)
+
             for pc in pipe_cols:
-                line += (u' ' * (pc - index)) + self._pipe_char
+                line += (u' ' * (pc - index)) + pipe
                 index = pc + 1
 
-            line += u'{}{} {}'.format((u' ' * (col - index)), self._cap_char, val)
-            lines.append(self._theme['inspect'](line) if self._colored else line)
+            line += u'{}{} {}'.format((u' ' * (col - index)), cap, value)
+            lines.append(line)
+
         formatted = u'\n    '.join(lines)
 
         return (filename, lineno, function, formatted), color_source
-
 
     def format_traceback(self, tb=None):
         omit_last = False
@@ -241,8 +272,15 @@ class ExceptionFormatter(object):
             tb = tb.tb_next
 
         lines = traceback.format_list(frames)
+        new_lines = []
 
-        return u''.join(lines), final_source
+        for line in lines:
+            colorize = lambda m: u'  ' + self.colorize_location(**m.groupdict())
+            line = self.LOCATION_REGXP.sub(colorize, line)
+            line = self.SHORT_LOCATION_REGXP.sub(colorize, line)
+            new_lines.append(line)
+
+        return u''.join(new_lines), final_source
 
     def sanitize(self, string):
         encoding = self._encoding
@@ -261,14 +299,14 @@ class ExceptionFormatter(object):
                                                   value.__cause__.__traceback__,
                                                   _seen=_seen):
                     yield text
-                yield '\n' + MESSAGES['cause'] + '\n\n'
+                yield u'\n' + self.colorize('cause', cause=self._cause) + u'\n\n'
             elif getattr(value, '__context__', None) not in _seen and not getattr(value, '__suppress_context__', True):
                 for text in self.format_exception(type(value.__context__),
                                                   value.__context__,
                                                   value.__context__.__traceback__,
                                                   _seen=_seen):
                     yield text
-                yield '\n' + MESSAGES['context'] + '\n\n'
+                yield u'\n' + self.colorize('context', context=self._context) + u'\n\n'
 
         formatted, colored_source = self.format_traceback(tb)
 
@@ -277,15 +315,24 @@ class ExceptionFormatter(object):
         title = traceback.format_exception_only(exc, value)
 
         formatted_title = []
+
+
         for line in title:
             if line.startswith('    '):
-                formatted_line = self.colorize_source(line) + u'\n'
-            else:
-                formatted_line = self.colorize_message(line)
-            formatted_title.append(formatted_line)
+                line = self.colorize_source(line) + u'\n'
+            elif self.EXCEPTION_REGXP.match(line):
+                match = self.EXCEPTION_REGXP.match(line)
+                line = self.colorize('exception', **match.groupdict()) + u'\n'
+            elif self.LOCATION_REGXP.match(line):
+                match = self.LOCATION_REGXP.match(line)
+                line = u'  ' + self.colorize_location(**match.groupdict()) + u'\n'
+            elif self.SHORT_LOCATION_REGXP.match(line):
+                match = self.SHORT_LOCATION_REGXP.match(line)
+                line = u'  ' + self.colorize_location(**match.groupdict()) + u'\n'
+            formatted_title.append(line)
         formatted_title = u''.join(formatted_title)
 
-        yield self.sanitize(MESSAGES['introduction'] + u'\n')
+        yield self.colorize('introduction', introduction=self._introduction) + u'\n'
 
         yield self.sanitize(formatted)
 

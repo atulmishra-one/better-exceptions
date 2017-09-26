@@ -20,8 +20,8 @@ function normalize {
 	cat | sed 's|0x[a-fA-F0-9]\{1,\}|0xDEADBEEF|g' | \
 	      sed 's|<module '"'[^']*' from '[^']*'>|<module 'test_module' from '/removed/for/test/purposes.py'>"'|g' | \
 	      sed 's|File "/[^"]*"|File "/removed/for/test/purposes.ext"|g' | \
-	      sed "s|-> '\\\xe5\\\xa4\\\xa9'|-> '\\\u5929'|g" | \
-	      sed "s|└ '\\\xe5\\\xa4\\\xa9'|└ '天'|g" | \
+	      sed "s|->\(.*\)'\\\xe5\\\xa4\\\xa9'|->\1'\\\u5929'|g" | \
+	      sed "s|└\(.*\)'\\\xe5\\\xa4\\\xa9'|└\1'天'|g" | \
 	      grep -v "bash: warning:"
 }
 

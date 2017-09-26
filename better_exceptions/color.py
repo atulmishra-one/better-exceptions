@@ -52,7 +52,13 @@ def get_terminfo_file():
     return f
 
 
-if os.name == 'nt':
+force_color = os.getenv('FORCE_COLOR', None)
+
+if force_color == '1':
+    SUPPORTS_COLOR = True
+elif force_color == '0':
+    SUPPORTS_COLOR = False
+elif os.name == 'nt':
     from colorama import init as init_colorama, AnsiToWin32
 
     init_colorama(wrap=False)
@@ -60,32 +66,29 @@ if os.name == 'nt':
     STREAM = AnsiToWin32(sys.stderr).stream
     SUPPORTS_COLOR = True
 else:
-    if os.getenv('FORCE_COLOR', None) == '1':
-        SUPPORTS_COLOR = True
-    else:
-        try:
-            # May raises an error on some exotic environment like GAE, see #28
-            is_tty = os.isatty(2)
-        except OSError:
-            is_tty = False
+    try:
+        # May raises an error on some exotic environment like GAE, see #28
+        is_tty = os.isatty(2)
+    except OSError:
+        is_tty = False
 
-        if is_tty:
-            f = get_terminfo_file()
-            if f is not None:
-                with f:
-                    # f is a valid terminfo; seek and read!
-                    magic_number = struct.unpack('<h', f.read(2))[0]
+    if is_tty:
+        f = get_terminfo_file()
+        if f is not None:
+            with f:
+                # f is a valid terminfo; seek and read!
+                magic_number = struct.unpack('<h', f.read(2))[0]
 
-                    if magic_number == 0x11A:
-                        # the opened terminfo file is valid.
-                        offset = 2 + 10  # magic number + size section (the next thing we read from)
-                        offset += struct.unpack('<h', f.read(2))[0]  # skip over names section
-                        offset += struct.unpack('<h', f.read(2))[0]  # skip over bool section
-                        offset += offset % 2  # align to short boundary
-                        offset += 13 * 2  # maxColors is the 13th numeric value
+                if magic_number == 0x11A:
+                    # the opened terminfo file is valid.
+                    offset = 2 + 10  # magic number + size section (the next thing we read from)
+                    offset += struct.unpack('<h', f.read(2))[0]  # skip over names section
+                    offset += struct.unpack('<h', f.read(2))[0]  # skip over bool section
+                    offset += offset % 2  # align to short boundary
+                    offset += 13 * 2  # maxColors is the 13th numeric value
 
-                        f.seek(offset)
-                        max_colors = struct.unpack('<h', f.read(2))[0]
+                    f.seek(offset)
+                    max_colors = struct.unpack('<h', f.read(2))[0]
 
-                        if max_colors >= 8:
-                            SUPPORTS_COLOR = True
+                    if max_colors >= 8:
+                        SUPPORTS_COLOR = True

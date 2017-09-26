@@ -63,7 +63,8 @@ setup(
     keywords = ['pretty', 'better', 'exceptions', 'exception', 'error', 'local', 'debug', 'debugging', 'locals'],
     classifiers = [],
     install_requires = [
-        'pygments>=2.2.0'
+        'ansimarkup>=1.3.0',
+        'pygments>=2.2.0',
     ],
     extras_require = {
         ':sys_platform=="win32"': ['colorama']
