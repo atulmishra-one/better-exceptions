@@ -55,12 +55,12 @@ spawn python -m better_exceptions --banner=0
 >>> foo(1)
 Traceback (most recent call last):
   File "<console>", line 1, in <module>
-    [38;5;15mfoo[39m[38;5;15m([39m[38;5;141m1[39m[38;5;15m)[39m
-    [36m-> <function foo at 0xDEADBEEF>[m
+    foo(1)
+    -> <function foo at 0xDEADBEEF>
   File "<console>", line 2, in foo
-    [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
-    [36m       -> 1[m
-AssertionError: [38;5;81massert[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m>[39m[38;5;15m [39m[38;5;141m10[39m
+    assert a > 10
+           -> 1
+AssertionError: assert a > 10
 >>> exit()
 
 
