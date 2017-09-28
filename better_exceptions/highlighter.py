@@ -10,7 +10,7 @@ class Highlighter(object):
         self._formatter = pygments.formatters.get_formatter_by_name('terminal256', style=style)
 
     def highlight(self, source):
-        return pygments.highlight(source, self._lexer, self._formatter).rstrip('\n')
+        return pygments.highlight(source, self._lexer, self._formatter)
 
     def get_tokens(self, source):
         return list(self._lexer.get_tokens_unprocessed(source))
