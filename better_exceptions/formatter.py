@@ -16,6 +16,7 @@ import distutils.sysconfig
 import inspect
 import linecache
 import os
+import platform
 import re
 import site
 import sys
@@ -124,11 +125,6 @@ class ExceptionFormatter(object):
         return [m.group(0) for m in self.CMDLINE_REGXP.finditer(cmdline)]
 
     def get_string_source(self):
-        import os
-        import platform
-
-        # import pdb; pdb.set_trace()
-
         cmdline = None
         if platform.system() == 'Windows':
             # TODO use winapi to obtain the command line
@@ -255,10 +251,9 @@ class ExceptionFormatter(object):
         return os.path.isfile(filepath) and not any(filepath.startswith(d) for d in self._lib_dirs)
 
     def get_traceback_information(self, tb):
-        frame_info = inspect.getframeinfo(tb)
-        filename = frame_info.filename
-        lineno = frame_info.lineno
-        function = frame_info.function
+        lineno = tb.tb_lineno
+        filename = tb.tb_frame.f_code.co_filename
+        function = tb.tb_frame.f_code.co_name
 
         repl = get_repl()
         if repl is not None and filename in repl.entries:
