@@ -2,19 +2,23 @@ python test/test.py
 
 
 Traceback (most recent call last):
+
   File "test/test.py", line 17, in <module>
     shallow(bar, 15)
     |       -> 2
     -> <function shallow at 0xDEADBEEF>
+
   File "test/test.py", line 8, in shallow
     deep(a + b)
     |    |   -> 15
     |    -> 2
     -> <function deep at 0xDEADBEEF>
+
   File "test/test.py", line 13, in deep
     assert val > 10 and foo == 60
            |            -> 52
            -> 17
+
 AssertionError: assert val > 10 and foo == 60
 
 
@@ -30,15 +34,19 @@ python test/test_encoding.py
 
 
 Traceback (most recent call last):
+
   File "test/test_encoding.py", line 14, in <module>
     div()
     -> <function div at 0xDEADBEEF>
+
   File "test/test_encoding.py", line 11, in div
     return _deep("\u5929")
            -> <function _deep at 0xDEADBEEF>
+
   File "test/test_encoding.py", line 8, in _deep
     return 1 / val
                -> '\u5929'
+
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
@@ -54,12 +62,14 @@ spawn python -m better_exceptions --banner=0
 ... 
 >>> foo(1)
 Traceback (most recent call last):
+
   File "<console>", line 1, in <module>
     foo(1)
     -> <function foo at 0xDEADBEEF>
   File "<console>", line 2, in foo
     assert a > 10
            -> 1
+
 AssertionError: assert a > 10
 >>> exit()
 
@@ -72,26 +82,31 @@ AssertionError: assert a > 10
 import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
            |                  |                         |             -> 5
            |                  |                         -> 5
            |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
            -> <module 'test_module' from '/removed/for/test/purposes.py'>
+
 AssertionError: import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
            |                  |                         |             -> 5
            |                  |                         -> 5
            |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
            -> <module 'test_module' from '/removed/for/test/purposes.py'>
+
 AssertionError: import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
 
 from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
                            |                      |                  |                         |                            -> 'why hello there'
@@ -99,10 +114,12 @@ Traceback (most recent call last):
                            |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
+
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
 why hello there
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
                            |                      |                  |                         |                            -> 'why hello there'
@@ -110,12 +127,14 @@ Traceback (most recent call last):
                            |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
+
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
 why hello there
 
 from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
                            |                      |                  |                         |                                                 -> 'why     hello             there'
@@ -123,10 +142,12 @@ Traceback (most recent call last):
                            |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
+
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
 why     hello             there
 
 Traceback (most recent call last):
+
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
                            |                      |                  |                         |                                                 -> 'why     hello             there'
@@ -134,6 +155,7 @@ Traceback (most recent call last):
                            |                      |                  -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            |                      -> <module 'test_module' from '/removed/for/test/purposes.py'>
                            -> _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
+
 AssertionError: from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
 why     hello             there
 
@@ -144,21 +166,27 @@ python test/test_logging.py
 
 ERROR:__main__:callback failed
 Traceback (most recent call last):
+
   File "test/test_logging.py", line 16, in foo
     cb()
     -> <function bar3 at 0xDEADBEEF>
+
   File "test/test_logging.py", line 33, in bar3
     raise Exception('this is a test exception')
+
 Exception: this is a test exception
 
 ERROR:__main__:callback failed
 Traceback (most recent call last):
+
   File "test/test_logging.py", line 16, in foo
     cb()
     -> <function bar4 at 0xDEADBEEF>
+
   File "test/test_logging.py", line 38, in bar4
     assert baz == 90
            -> 52
+
 AssertionError: assert baz == 90
 
 
@@ -168,12 +196,15 @@ python test/test_truncating.py
 
 
 Traceback (most recent call last):
+
   File "test/test_truncating.py", line 12, in <module>
     div()
     -> <function ...
+
   File "test/test_truncating.py", line 9, in div
     return 1 / var
                -> '999999999...
+
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
@@ -182,12 +213,15 @@ python test/test_truncating_disabled.py
 
 
 Traceback (most recent call last):
+
   File "test/test_truncating_disabled.py", line 12, in <module>
     div()
     -> <function div at 0xDEADBEEF>
+
   File "test/test_truncating_disabled.py", line 9, in div
     return 1 / var
                -> '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
+
 TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
