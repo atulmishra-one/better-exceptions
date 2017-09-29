@@ -1,4 +1,6 @@
-# better-exceptions [![Travis](https://img.shields.io/travis/Qix-/better-exceptions.svg?style=flat-square)](https://travis-ci.org/Qix-/better-exceptions)
+*__Note:__ This a fork of the original `better_exceptions` library. This fork is intended to fix some edge cases I reported (see [#47](https://github.com/Qix-/better-exceptions/issues/47)), but for this it adds two dependencies to the project. The fixed errors are too small to justify the addition of dependency to the main library, hence this fork that I publish for personal use.*
+
+# better-exceptions [![Travis](https://img.shields.io/travis/Delgan/better-exceptions.svg?style=flat-square)](https://travis-ci.org/Delgan/better-exceptions)
 
 Pretty and more helpful exceptions in Python, automatically.
 
