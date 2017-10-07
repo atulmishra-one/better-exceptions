@@ -248,7 +248,9 @@ class ExceptionFormatter(object):
         if filepath == "<string>":
             return None
         filepath = os.path.abspath(filepath)
-        return os.path.isfile(filepath) and not any(filepath.startswith(d) for d in self._lib_dirs)
+        if not os.path.isfile(filepath):
+            return False
+        return not any(filepath.lower().startswith(d.lower()) for d in self._lib_dirs)
 
     def get_traceback_information(self, tb):
         lineno = tb.tb_lineno
