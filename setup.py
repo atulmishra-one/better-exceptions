@@ -51,15 +51,22 @@ with open('better_exceptions/__init__.py', 'r') as file:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         file.read(), re.MULTILINE).group(1)
 
+with open('README.rst', 'rb') as file:
+    readme = file.read().decode('utf-8')
+
 setup(
-    name = 'better_exceptions',
-    packages = ['better_exceptions'],
+    name = 'better_exceptions_fork',
+    packages = ['better_exceptions', 'better_exceptions_fork'],
+    package_dir = {'better_exceptions_fork': 'better_exceptions'},
     version = version,
     description = 'Pretty and helpful exceptions, automatically',
+    long_description = readme,
     author = 'Josh Junon',
     author_email = 'josh@junon.me',
-    url = 'https://github.com/qix-/better-exceptions',
-    download_url = 'https://github.com/qix-/better-exceptions/archive/{}.tar.gz'.format(version),
+    maintainer = 'Delgan',
+    maintainer_email = 'delgan.py@gmail.com',
+    url = 'https://github.com/delgan/better-exceptions',
+    download_url = 'https://github.com/delgan/better-exceptions/archive/{}.tar.gz'.format(version),
     keywords = ['pretty', 'better', 'exceptions', 'exception', 'error', 'local', 'debug', 'debugging', 'locals'],
     classifiers = [],
     install_requires = [

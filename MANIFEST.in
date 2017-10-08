@@ -3,7 +3,7 @@ graft test
 
 include better_exceptions_hook.pth
 
-include README.md
+include README.rst
 include LICENSE.txt
 include setup.py
 include setup.cfg
