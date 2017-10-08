@@ -89,8 +89,7 @@ class ExceptionFormatter(object):
         return [os.path.abspath(d) for d in lib_dirs]
 
     def get_relevant_names(self, source):
-        source = source.encode(self._encoding, errors='backslashreplace')
-        source = source.decode(self._encoding)
+        source = self.sanitize(source)
         tokens = self._highlighter.get_tokens(source)
         return [token for token in tokens if token[1] in Token.Name]
 
