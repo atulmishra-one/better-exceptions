@@ -332,6 +332,7 @@ class ExceptionFormatter(object):
         if _seen is None:
             _seen = {None}
 
+        exc = type(value)
         _seen.add(value)
 
         if value:
@@ -350,10 +351,13 @@ class ExceptionFormatter(object):
                     yield text
                 yield u'\n\n' + self.colorize('context', context=self._context) + u'\n\n\n'
 
-        # Print it from start so user have a clue if something goes wrong during formatting
-        yield self.colorize('introduction', introduction=self._introduction) + u'\n\n'
+        if tb is not None:
+            # Print it from start so user have a clue if something goes wrong during formatting
+            yield self.colorize('introduction', introduction=self._introduction) + u'\n\n'
 
         formatted, source = self.format_traceback(tb)
+        if formatted:
+            formatted += u'\n'
 
         if not str(value) and exc is AssertionError:
             colored_source = self.colorize_source(source)
@@ -362,7 +366,7 @@ class ExceptionFormatter(object):
 
         if exception_only and ':' in exception_only[-1]:
             type_, value = exception_only[-1].split(':', 1)
-            exception_only[-1] = u'\n' + self.colorize('exception', type_=type_, value=value)
+            exception_only[-1] = self.colorize('exception', type_=type_, value=value)
 
         full_traceback = formatted + u''.join(exception_only)
         full_traceback = self.colorize_traceback(full_traceback)
