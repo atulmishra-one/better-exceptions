@@ -211,6 +211,11 @@ class ExceptionFormatter(object):
             filepath, lineno, source = dct['filepath'], dct['lineno'], dct['source']
             code, inspect = dct['code'], dct['inspect']
 
+            if code is None:
+                code = u''
+            if inspect is None:
+                inspect = u''
+
             if local:
                 init = False
                 is_previous_mine = local['is_previous_mine']
@@ -224,10 +229,11 @@ class ExceptionFormatter(object):
 
             if is_mine:
                 location = self.colorize_location(filepath=filepath, lineno=lineno, source=source)
-                code = self.colorize_source(code) if code else u''
-                inspect = re.sub(u'^    (?P<pipes>[\\s(?:{pipe})]*)(?P<cap>{cap}) (?P<value>.*)$'.format(pipe=pipe, cap=cap),
-                       lambda m: self.colorize('inspect', **m.groupdict()),
-                       inspect, flags=re.M) if inspect else ''
+                if code:
+                    code = self.colorize_source(code)
+                if inspect:
+                    reg_inspect = u'^    (?P<pipes>[\\s(?:{pipe})]*)(?P<cap>{cap}) (?P<value>.*)$'.format(pipe=pipe, cap=cap)
+                    inspect = re.sub(reg_inspect, lambda m: self.colorize('inspect', **m.groupdict()), inspect, flags=re.M)
 
             if (is_mine or is_previous_mine) and not init:
                 location = u'\n' + location
