@@ -31,6 +31,21 @@ And set the ``BETTER_EXCEPTIONS`` environment variable to any value:
 
 That's it!
 
+Python REPL (Interactive Shell)
+~~~~~~~~~~~~~~
+
+In order to use ``better_exceptions`` in the Python REPL, first install the
+package (as instructed above) and run:
+
+.. code:: console
+
+    $ python -m better_exceptions
+    Type "help", "copyright", "credits" or "license" for more information.
+    (BetterExceptionsConsole)
+    >>>
+
+in order to drop into a ``better_exceptions``-enabled Python interactive shell.
+
 Advanced Usage
 ~~~~~~~~~~~~~~
 
@@ -56,10 +71,6 @@ OSX, the ``export`` command does not add the variable permanently, you
 will probably need to edit the ``~/.profile`` file to make it
 persistent. On Windows, you need to open a new terminal after the
 ``setx`` command.
-
-You should also note that ``better_exceptions`` does not work inside the
-Python interactive shell, unless the executed code comes from another
-file.
 
 Check that there is no conflict with another library, and that the
 ``sys.excepthook`` function has been correctly replaced with the
