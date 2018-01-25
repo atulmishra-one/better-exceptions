@@ -32,7 +32,7 @@ And set the ``BETTER_EXCEPTIONS`` environment variable to any value:
 That's it!
 
 Python REPL (Interactive Shell)
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to use ``better_exceptions`` in the Python REPL, first install the
 package (as instructed above) and run:
