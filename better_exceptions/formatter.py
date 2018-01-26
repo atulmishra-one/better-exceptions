@@ -79,7 +79,22 @@ class ExceptionFormatter(object):
     def get_relevant_names(self, source):
         source = self.sanitize(source)
         tokens = self._highlighter.get_tokens(source)
-        return [token for token in tokens if token[1] in Token.Name]
+        return [(index, value) for index, tokentype, value in tokens if tokentype in Token.Name]
+
+    def get_relevant_values(self, source, frame):
+        names = self.get_relevant_names(source)
+        values = []
+
+        for index, value in names:
+            if value in frame.f_locals:
+                val = frame.f_locals.get(value, None)
+                values.append((index, self.format_value(val)))
+            elif value in frame.f_globals:
+                val = frame.f_globals.get(value, None)
+                values.append((index, self.format_value(val)))
+
+        values.sort()
+        return values
 
     def format_value(self, v):
         try:
@@ -91,22 +106,6 @@ class ExceptionFormatter(object):
         if max_length is not None and len(v) > max_length:
             v = v[:max_length] + u'...'
         return v
-
-    def get_relevant_values(self, source, frame):
-        names = self.get_relevant_names(source)
-        values = []
-
-        for name in names:
-            index, tokentype, value = name
-            if value in frame.f_locals:
-                val = frame.f_locals.get(value, None)
-                values.append((value, index, self.format_value(val)))
-            elif value in frame.f_globals:
-                val = frame.f_globals.get(value, None)
-                values.append((value, index, self.format_value(val)))
-
-        values.sort(key=lambda e: e[1])
-        return values
 
     def split_cmdline(self, cmdline):
         return [m.group(0) for m in self.CMDLINE_REGXP.finditer(cmdline)]
@@ -273,8 +272,8 @@ class ExceptionFormatter(object):
 
         lines = [source]
         for i in reversed(range(len(relevant_values))):
-            _, col, val = relevant_values[i]
-            pipe_cols = [pcol for _, pcol, _ in relevant_values[:i]]
+            col, val = relevant_values[i]
+            pipe_cols = [pcol for pcol, _ in relevant_values[:i]]
             line = u''
             index = 0
 
