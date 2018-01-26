@@ -22,6 +22,7 @@ function normalize {
 	      sed 's|File "/[^"]*"|File "/removed/for/test/purposes.ext"|g' | \
 	      sed "s|->\(.*\)'\\\xe5\\\xa4\\\xa9'|->\1'\\\u5929'|g" | \
 	      sed "s|└\(.*\)'\\\xe5\\\xa4\\\xa9'|└\1'天'|g" | \
+	      sed "s|<type 'exceptions\.Exception'>|<class 'Exception'>|g" | \
 	      grep -v "bash: warning:"
 }
 

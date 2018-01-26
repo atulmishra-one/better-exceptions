@@ -9,4 +9,4 @@ if True:
     b = 7 *
 """
 
-exec(code)
+compile(code, '<string>', 'exec')

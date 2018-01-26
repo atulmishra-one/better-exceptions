@@ -115,7 +115,8 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 
   File "[32m[1m<string>[0m[32m[0m", line [33m1[0m, in [35m<module>[0m
 [38;5;15m    [39m[38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
-    [36m                       │                      │                  │                         │                            └ [1m'why hello there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                      │     └ [1m'why hello there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                      └ [1m<built-in function print>[0m[36m[0m
     [36m                       │                      │                  │                         └ [1m'why hello there'[0m[36m[0m
     [36m                       │                      │                  └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
     [36m                       │                      └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
@@ -129,7 +130,8 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 
   File "[32m[1m<string>[0m[32m[0m", line [33m1[0m, in [35m<module>[0m
 [38;5;15m    [39m[38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy hello there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
-    [36m                       │                      │                  │                         │                            └ [1m'why hello there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                      │     └ [1m'why hello there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                      └ [1m<built-in function print>[0m[36m[0m
     [36m                       │                      │                  │                         └ [1m'why hello there'[0m[36m[0m
     [36m                       │                      │                  └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
     [36m                       │                      └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
@@ -145,7 +147,8 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 
   File "[32m[1m<string>[0m[32m[0m", line [33m1[0m, in [35m<module>[0m
 [38;5;15m    [39m[38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
-    [36m                       │                      │                  │                         │                                                 └ [1m'why     hello             there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                                           │     └ [1m'why     hello             there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                                           └ [1m<built-in function print>[0m[36m[0m
     [36m                       │                      │                  │                         └ [1m'why     hello             there'[0m[36m[0m
     [36m                       │                      │                  └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
     [36m                       │                      └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
@@ -159,7 +162,8 @@ from __future__ import print_function; import better_exceptions; better_exceptio
 
   File "[32m[1m<string>[0m[32m[0m", line [33m1[0m, in [35m<module>[0m
 [38;5;15m    [39m[38;5;197mfrom[39m[38;5;15m [39m[38;5;15m__future__[39m[38;5;15m [39m[38;5;81mimport[39m[38;5;15m [39m[38;5;15mprint_function[39m[38;5;15m;[39m[38;5;15m [39m[38;5;197mimport[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mbetter_exceptions[39m[38;5;197m.[39m[38;5;15mhook[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15ma[39m[38;5;15m [39m[38;5;197m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186mwhy     hello          [39m[38;5;186m"[39m[38;5;15m [39m[38;5;197m+[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m   there[39m[38;5;186m"[39m[38;5;15m;[39m[38;5;15m [39m[38;5;15mprint[39m[38;5;15m([39m[38;5;15ma[39m[38;5;15m)[39m[38;5;15m;[39m[38;5;15m [39m[38;5;81massert[39m[38;5;15m [39m[38;5;81mFalse[39m
-    [36m                       │                      │                  │                         │                                                 └ [1m'why     hello             there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                                           │     └ [1m'why     hello             there'[0m[36m[0m
+    [36m                       │                      │                  │                         │                                           └ [1m<built-in function print>[0m[36m[0m
     [36m                       │                      │                  │                         └ [1m'why     hello             there'[0m[36m[0m
     [36m                       │                      │                  └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
     [36m                       │                      └ [1m<module 'test_module' from '/removed/for/test/purposes.py'>[0m[36m[0m
@@ -183,6 +187,7 @@ ERROR:__main__:callback failed
 
   File "[32mtest/[1mtest_logging.py[0m[32m[0m", line [33m33[0m, in [35mbar3[0m
 [38;5;15m    [39m[38;5;81mraise[39m[38;5;15m [39m[38;5;148mException[39m[38;5;15m([39m[38;5;186m'[39m[38;5;186mthis is a test exception[39m[38;5;186m'[39m[38;5;15m)[39m
+    [36m      └ [1m<class 'Exception'>[0m[36m[0m
 
 [91mException[0m:[1m this is a test exception
 [0m
@@ -245,8 +250,9 @@ python test/test_indentation_error.py
 [33m[1mTraceback (most recent call last):[0m[33m[0m
 
   File "[32mtest/[1mtest_indentation_error.py[0m[32m[0m", line [33m13[0m, in [35m<module>[0m
-[38;5;15m    [39m[38;5;15mexec[39m[38;5;15m([39m[38;5;15mcode[39m[38;5;15m)[39m
-    [36m     └ [1m'\nif True:\n    a = 5\n        print("foobar")  #intentional faulty indentation here.\n    b = 7\n'[0m[36m[0m
+[38;5;15m    [39m[38;5;15mcompile[39m[38;5;15m([39m[38;5;15mcode[39m[38;5;15m,[39m[38;5;15m [39m[38;5;186m'[39m[38;5;186m<string>[39m[38;5;186m'[39m[38;5;15m,[39m[38;5;15m [39m[38;5;186m'[39m[38;5;186mexec[39m[38;5;186m'[39m[38;5;15m)[39m
+    [36m│       └ [1m'\nif True:\n    a = 5\n        print("foobar")  #intentional faulty indentation here.\n    b = 7\n'[0m[36m[0m
+    [36m└ [1m<built-in function compile>[0m[36m[0m
 
 
   File "[32m[1m<string>[0m[32m[0m", line [33m4[0m
@@ -264,8 +270,9 @@ python test/test_syntax_error.py
 [33m[1mTraceback (most recent call last):[0m[33m[0m
 
   File "[32mtest/[1mtest_syntax_error.py[0m[32m[0m", line [33m12[0m, in [35m<module>[0m
-[38;5;15m    [39m[38;5;15mexec[39m[38;5;15m([39m[38;5;15mcode[39m[38;5;15m)[39m
-    [36m     └ [1m'\nif True:\n    a = 5\n    b = 7 *\n'[0m[36m[0m
+[38;5;15m    [39m[38;5;15mcompile[39m[38;5;15m([39m[38;5;15mcode[39m[38;5;15m,[39m[38;5;15m [39m[38;5;186m'[39m[38;5;186m<string>[39m[38;5;186m'[39m[38;5;15m,[39m[38;5;15m [39m[38;5;186m'[39m[38;5;186mexec[39m[38;5;186m'[39m[38;5;15m)[39m
+    [36m│       └ [1m'\nif True:\n    a = 5\n    b = 7 *\n'[0m[36m[0m
+    [36m└ [1m<built-in function compile>[0m[36m[0m
 
 
   File "[32m[1m<string>[0m[32m[0m", line [33m4[0m

@@ -92,6 +92,9 @@ class ExceptionFormatter(object):
             elif value in frame.f_globals:
                 val = frame.f_globals.get(value, None)
                 values.append((index, self.format_value(val)))
+            elif value in frame.f_builtins:
+                val = frame.f_builtins.get(value, None)
+                values.append((index, self.format_value(val)))
 
         values.sort()
         return values
