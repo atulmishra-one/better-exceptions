@@ -79,22 +79,42 @@ class ExceptionFormatter(object):
     def get_relevant_names(self, source):
         source = self.sanitize(source)
         tokens = self._highlighter.get_tokens(source)
-        return [(index, value) for index, tokentype, value in tokens if tokentype in Token.Name]
+        names = []
+
+        name = ''
+        for index, tokentype, value in tokens:
+            if tokentype in Token.Name:
+                name += value
+                names.append((index, name))
+            elif tokentype in Token.Operator and value == '.':
+                name += '.'
+            elif tokentype not in Token.Text:
+                name = ''
+
+        return names
 
     def get_relevant_values(self, source, frame):
         names = self.get_relevant_names(source)
         values = []
 
-        for index, value in names:
-            if value in frame.f_locals:
-                val = frame.f_locals.get(value, None)
-                values.append((index, self.format_value(val)))
-            elif value in frame.f_globals:
-                val = frame.f_globals.get(value, None)
-                values.append((index, self.format_value(val)))
-            elif value in frame.f_builtins:
-                val = frame.f_builtins.get(value, None)
-                values.append((index, self.format_value(val)))
+        for index, name in names:
+            vals = name.split('.')
+            identifier, attrs = vals[0], vals[1:]
+            for variables in (frame.f_locals, frame.f_globals, frame.f_builtins):
+                try:
+                    val = variables[identifier]
+                except KeyError:
+                    continue
+
+                try:
+                    for attr in attrs:
+                        val = getattr(val, attr)
+                except:  # @property could raise an error as side effect
+                    pass
+                else:
+                    values.append((index, self.format_value(val)))
+
+                break
 
         values.sort()
         return values

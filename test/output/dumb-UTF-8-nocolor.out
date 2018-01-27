@@ -85,8 +85,9 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
-           │                  │                         │             └ 5
-           │                  │                         └ 5
+           │                  │                 │       │             └ 5
+           │                  │                 │       └ 5
+           │                  │                 └ <function hook at 0xDEADBEEF>
            │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
            └ <module 'test_module' from '/removed/for/test/purposes.py'>
 
@@ -96,8 +97,9 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     import better_exceptions; better_exceptions.hook(); a = 5; assert a > 10 # this should work fine
-           │                  │                         │             └ 5
-           │                  │                         └ 5
+           │                  │                 │       │             └ 5
+           │                  │                 │       └ 5
+           │                  │                 └ <function hook at 0xDEADBEEF>
            │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
            └ <module 'test_module' from '/removed/for/test/purposes.py'>
 
@@ -109,9 +111,10 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
-                           │                      │                  │                         │                      │     └ 'why hello there'
-                           │                      │                  │                         │                      └ <built-in function print>
-                           │                      │                  │                         └ 'why hello there'
+                           │                      │                  │                 │       │                      │     └ 'why hello there'
+                           │                      │                  │                 │       │                      └ <built-in function print>
+                           │                      │                  │                 │       └ 'why hello there'
+                           │                      │                  │                 └ <function hook at 0xDEADBEEF>
                            │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
@@ -123,9 +126,10 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why hello there"; print(a); assert False
-                           │                      │                  │                         │                      │     └ 'why hello there'
-                           │                      │                  │                         │                      └ <built-in function print>
-                           │                      │                  │                         └ 'why hello there'
+                           │                      │                  │                 │       │                      │     └ 'why hello there'
+                           │                      │                  │                 │       │                      └ <built-in function print>
+                           │                      │                  │                 │       └ 'why hello there'
+                           │                      │                  │                 └ <function hook at 0xDEADBEEF>
                            │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
@@ -139,9 +143,10 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
-                           │                      │                  │                         │                                           │     └ 'why     hello             there'
-                           │                      │                  │                         │                                           └ <built-in function print>
-                           │                      │                  │                         └ 'why     hello             there'
+                           │                      │                  │                 │       │                                           │     └ 'why     hello             there'
+                           │                      │                  │                 │       │                                           └ <built-in function print>
+                           │                      │                  │                 │       └ 'why     hello             there'
+                           │                      │                  │                 └ <function hook at 0xDEADBEEF>
                            │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
@@ -153,9 +158,10 @@ Traceback (most recent call last):
 
   File "<string>", line 1, in <module>
     from __future__ import print_function; import better_exceptions; better_exceptions.hook(); a = "why     hello          " + "   there"; print(a); assert False
-                           │                      │                  │                         │                                           │     └ 'why     hello             there'
-                           │                      │                  │                         │                                           └ <built-in function print>
-                           │                      │                  │                         └ 'why     hello             there'
+                           │                      │                  │                 │       │                                           │     └ 'why     hello             there'
+                           │                      │                  │                 │       │                                           └ <built-in function print>
+                           │                      │                  │                 │       └ 'why     hello             there'
+                           │                      │                  │                 └ <function hook at 0xDEADBEEF>
                            │                      │                  └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            │                      └ <module 'test_module' from '/removed/for/test/purposes.py'>
                            └ _Feature((2, 6, 0, 'alpha', 2), (3, 0, 0, 'alpha', 0), 65536)
@@ -264,6 +270,35 @@ Traceback (most recent call last):
     b = 7 *
           ^
 SyntaxError: invalid syntax
+
+
+
+python test/test_attributes.py
+
+
+Traceback (most recent call last):
+
+  File "test/test_attributes.py", line 17, in <module>
+    attr()
+    └ <function attr at 0xDEADBEEF>
+
+  File "test/test_attributes.py", line 15, in attr
+    (b / a).test * foo(d. A or d .B) * (c.DDD.B) - c.DDD.A.isdigit() / .3
+     │   │             │  │    │  │     │ │   │    │ │   │ └ <built-in method isdigit of str object at 0xDEADBEEF>
+     │   │             │  │    │  │     │ │   │    │ │   └ 'string'
+     │   │             │  │    │  │     │ │   │    │ └ <__main__.Obj object at 0xDEADBEEF>
+     │   │             │  │    │  │     │ │   │    └ <__main__.Obj object at 0xDEADBEEF>
+     │   │             │  │    │  │     │ │   └ 123
+     │   │             │  │    │  │     │ └ <__main__.Obj object at 0xDEADBEEF>
+     │   │             │  │    │  │     └ <__main__.Obj object at 0xDEADBEEF>
+     │   │             │  │    │  └ 123
+     │   │             │  │    └ <__main__.Obj object at 0xDEADBEEF>
+     │   │             │  └ 'string'
+     │   │             └ <__main__.Obj object at 0xDEADBEEF>
+     │   └ 'string'
+     └ 123
+
+TypeError: unsupported operand type(s) for /: 'int' and 'str'
 
 
 
