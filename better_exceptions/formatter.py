@@ -27,7 +27,7 @@ THEME = {
     'context': u'<b>{context}</b>',
     'location': u'  File "<g>{dirname}<b>{basename}</b></g>", line <y>{lineno}</y>, in <m>{source}</m>',
     'short_location': u'  File "<g>{dirname}<b>{basename}</b></g>", line <y>{lineno}</y>',
-    'exception': u'<lr>{type_}</lr>:<b>{value}</b>',
+    'exception': u'<r><b>{type_}</b></r>:<b>{value}</b>',
     'inspect': u'    <c>{pipes}{cap} <b>{value}</b></c>',
 }
 
