@@ -50,6 +50,7 @@ function test_all {
 	test_case "$BETEXC_PYTHON" "test/test_indentation_error.py"
 	test_case "$BETEXC_PYTHON" "test/test_syntax_error.py"
 	test_case "$BETEXC_PYTHON" "test/test_attributes.py"
+	test_case "$BETEXC_PYTHON" "test/test_multilines_repr.py"
 }
 
 for encoding in ascii "UTF-8"; do

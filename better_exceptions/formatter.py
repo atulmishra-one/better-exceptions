@@ -109,7 +109,7 @@ class ExceptionFormatter(object):
                 try:
                     for attr in attrs:
                         val = getattr(val, attr)
-                except:  # @property could raise an error as side effect
+                except Exception:  # @property could raise an error as side effect
                     pass
                 else:
                     values.append((index, self.format_value(val)))
@@ -122,7 +122,7 @@ class ExceptionFormatter(object):
     def format_value(self, v):
         try:
             v = repr(v)
-        except:
+        except Exception:
             v = u'<unprintable %s object>' % type(v).__name__
 
         max_length = self._max_length
@@ -185,8 +185,8 @@ class ExceptionFormatter(object):
 
         return source
 
-    def colorize(self, theme, **kwargs):
-        template = self._theme[theme]
+    def colorize(self, template, **kwargs):
+        template = self._theme[template]
         if not self._colored:
             template = ansimarkup.strip(template)
         else:
@@ -200,18 +200,18 @@ class ExceptionFormatter(object):
             dirname += os.sep
 
         if source is None:
-            theme = 'short_location'
+            template = 'short_location'
         else:
-            theme = 'location'
+            template = 'location'
 
-        return self.colorize(theme, dirname=dirname, basename=basename, lineno=lineno, source=source)
+        return self.colorize(template, dirname=dirname, basename=basename, lineno=lineno, source=source)
 
     def colorize_traceback(self, full_traceback):
         pipe = re.escape(self._pipe_char)
         cap = re.escape(self._cap_char)
         reg = re.compile(u'^(?P<location>  File "(?P<filepath>.*?)", line (?P<lineno>(?:\\d+|\\?))(?:, in (?P<source>.*))?)\\n'
                          u'((?P<code>    .*\\n(?:\\s*\\^)?)'
-                         u'(?P<inspect>(?:    [\\s(?:{pipe})]*{cap} .*\\n)*))?'.format(pipe=pipe, cap=cap),
+                         u'(?P<inspect>(?:    [\\s(?:{pipe})]*(?:{cap})? .*\\n)*))?'.format(pipe=pipe, cap=cap),
                          flags=re.M)
 
         local = {}
@@ -242,8 +242,9 @@ class ExceptionFormatter(object):
                 if code:
                     code = self.colorize_source(code)
                 if inspect:
-                    reg_inspect = u'^    (?P<pipes>[\\s(?:{pipe})]*)(?P<cap>{cap}) (?P<value>.*)$'.format(pipe=pipe, cap=cap)
-                    inspect = re.sub(reg_inspect, lambda m: self.colorize('inspect', **m.groupdict()), inspect, flags=re.M)
+                    reg_inspect = u'^    (?P<pipes>[\\s(?:{pipe})]*)(?P<cap>{cap})? (?P<value>.*)$'.format(pipe=pipe, cap=cap)
+                    sub_inspect = lambda m: self.colorize('inspect', pipes=m.group('pipes'), cap=m.group('cap') or '', value=m.group('value'))
+                    inspect = re.sub(reg_inspect, sub_inspect, inspect, flags=re.M)
 
             if (is_mine or is_previous_mine) and not init:
                 location = u'\n' + location
@@ -292,6 +293,7 @@ class ExceptionFormatter(object):
     def format_traceback_frame(self, tb):
         traceback_information = self.get_traceback_information(tb)
         filename, lineno, function, source, relevant_values = traceback_information
+        pipe_char, cap_char = self._pipe_char, self._cap_char
 
         lines = [source]
         for i in reversed(range(len(relevant_values))):
@@ -301,11 +303,16 @@ class ExceptionFormatter(object):
             index = 0
 
             for pc in pipe_cols:
-                line += (u' ' * (pc - index)) + self._pipe_char
+                line += (u' ' * (pc - index)) + pipe_char
                 index = pc + 1
 
-            line += u'{}{} {}'.format((u' ' * (col - index)), self._cap_char, val)
-            lines.append(line)
+            line += u' ' * (col - index)
+            val_lines = val.split(u'\n')
+            first, others = val_lines[0], val_lines[1:]
+            lines.append(line + cap_char + u' ' + first)
+            preline = line + u' ' * (len(cap_char) + 1)
+            for other in others:
+                lines.append(preline + other)
 
         formatted = u'\n    '.join(lines)
 
@@ -316,7 +323,7 @@ class ExceptionFormatter(object):
         if not tb:
             try:
                 raise Exception()
-            except:
+            except Exception:
                 omit_last = True
                 _, _, tb = sys.exc_info()
                 assert tb is not None
