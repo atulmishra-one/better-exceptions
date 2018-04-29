@@ -21,7 +21,7 @@ from .color import SUPPORTS_COLOR, STREAM
 from .log import BetExcLogger, patch as patch_logging
 
 
-__version__ = '0.2.1.post5'
+__version__ = '0.2.1.post6'
 
 
 THEME = THEME.copy()  # Users customizing the theme should not impact core
